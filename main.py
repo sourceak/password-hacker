@@ -1,16 +1,30 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+import string
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+# loop through file to get ranking
+def pass_check(password):
+    f = open('100000-most-common-passwords.txt', 'r')
+
+    count = 0
+
+    for line in f:
+        count += 1
+        line = line[:-1]
+        if line == password.lower():
+            f.close()
+            return f"{password}: ❌ (#{count})"
+    return f"{password}: ✅ (Unique)"
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+# ask the user to input a password
+def main():
+    while True:
+        password = input("Enter a password: ")
+        for letter in password:
+            if letter in string.ascii_letters or letter in string.punctuation or letter in string.digits:
+                print(pass_check(password))
+                return
+        print("Please enter a valid Password.")
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+main()
