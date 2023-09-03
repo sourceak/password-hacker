@@ -1,5 +1,6 @@
 import string
 import itertools
+import time
 
 
 # loop through file to get ranking
@@ -19,22 +20,24 @@ def pass_check(password):
     return f"{password}: ✅ (Unique)"
 
 
-def breaker(password, letters, digits, symbols):
-    # all of them
-    test = string.ascii_letters + str(string.digits) + string.punctuation
+def breaker(password, lower, upper, digits, symbols):
+    test = ""
 
     # contours test based on given truth value
-    if not symbols and not digits:
-        test = test[:52]
-    elif not symbols:
-        test = test[:62]
-    elif not digits:
-        test = test[:52] + test[len(string.ascii_letters) + len(string.digits):]
-    if not letters:
-        test = test[52:]
+    if lower:
+        test += string.ascii_lowercase
+        print('run 1')
+    if upper:
+        test += string.ascii_uppercase
+        print('run 2')
+    if digits:
+        test += str(string.digits)
+        print('run 3')
+    if symbols:
+        test += string.punctuation
+        print('run 4')
 
     # list of tuples of every possible test
-    # find a more efficient method for odometer - cartesian is too memory intensive
     cartesian = list(itertools.product(test, repeat=len(password)))
 
     count = 0
@@ -43,13 +46,14 @@ def breaker(password, letters, digits, symbols):
         count += 1
         code = ''.join(couple)
         if code == password:
-            return f"{password} was cracked in {count} guesses."
+            return f"{password} was cracked in {count:,} guesses."
 
 
 def main():
     digits = False
     symbols = False
-    letters = False
+    lower = False
+    upper = False
     while True:
         password = input("Enter a password: ")
 
@@ -61,17 +65,23 @@ def main():
             if char in string.punctuation:
                 symbols = True
 
-            if char in string.ascii_letters:
-                letters = True
+            if char in string.ascii_lowercase:
+                lower = True
+
+            if char in string.ascii_uppercase:
+                upper = True
 
         # validates to make sure the user didn't just enter white space
-        if letters or digits or symbols:
+        if lower or upper or digits or symbols:
             common = pass_check(password)
             print(common)
 
             # if password not common, breaker runs
             if 'Unique' in common:
-                print(breaker(password, letters, digits, symbols))
+                start = time.time()
+                print(breaker(password, lower, upper, digits, symbols))
+                end = time.time()
+                print(f"Time: {(end - start):.4f}s")
                 return
             return
 
